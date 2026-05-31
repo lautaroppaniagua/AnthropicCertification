@@ -193,7 +193,7 @@ var QUESTIONS = [
     ],
     correct: [0],
     explanation: "When a business rule requires guaranteed compliance and the action has financial consequences, deterministic programmatic enforcement (a hook intercepting the outgoing tool call) is the only approach with a zero failure rate. Options B, C, and D all rely on probabilistic LLM compliance, which has a non-zero failure rate no matter how forceful the prompt or how many examples are added. Temperature does not make instruction-following deterministic.",
-    doc_link: "https://docs.anthropic.com/en/docs/claude-code/hooks"
+    doc_link: "https://code.claude.com/docs/en/hooks"
   },
   {
     id: "q14",
@@ -207,7 +207,7 @@ var QUESTIONS = [
     ],
     correct: [0],
     explanation: "A business-rule violation is non-retryable. Returning structured error context (category, isRetryable: false, human-readable reason) lets the agent stop retrying and explain the outcome to the customer. Option B wastes retries on an error that can never succeed. Option C addresses transient failures, not a policy outcome. Option D silently masks failure as success — an anti-pattern that produces incorrect customer communication.",
-    doc_link: "https://docs.anthropic.com/en/docs/build-with-claude/tool-use"
+    doc_link: "https://docs.claude.com/en/docs/agents-and-tools/tool-use/overview"
   },
   {
     id: "q15",
@@ -221,7 +221,7 @@ var QUESTIONS = [
     ],
     correct: [0],
     explanation: "Progressive summarization predictably condenses precise numerical values into vague approximations. Pinning exact transactional facts in a structured block that bypasses summarization preserves them reliably. Option B summarizes more often, increasing the risk of detail loss. Option C relies on a vague instruction that does not reliably protect specific values. Option D defers the problem; even large windows accumulate verbose history that benefits from structured fact extraction.",
-    doc_link: "https://docs.anthropic.com/en/docs/build-with-claude/context-windows"
+    doc_link: "https://docs.claude.com/en/docs/build-with-claude/context-windows"
   },
   {
     id: "q16",
@@ -235,7 +235,7 @@ var QUESTIONS = [
     ],
     correct: [0],
     explanation: "Multiple matches require clarification with additional identifiers rather than heuristic selection, which risks acting on the wrong account. Options B and C use heuristics that can misidentify the customer and lead to incorrect actions. Option D over-escalates: needing one more identifier is not case complexity, and escalation should be reserved for genuine policy gaps, explicit customer requests, or inability to progress.",
-    doc_link: "https://docs.anthropic.com/en/docs/build-with-claude/agents"
+    doc_link: "https://docs.claude.com/en/docs/agents-and-tools/tool-use/overview"
   },
 
   // ── Scenario: Code Generation with Claude Code (generated) ──────────────
@@ -252,7 +252,7 @@ var QUESTIONS = [
     ],
     correct: [0],
     explanation: "User-level (~/.claude/CLAUDE.md) settings apply only to that user and are not shared via version control — exactly why the new engineer is missing them. Project-level CLAUDE.md committed to the repo is delivered to everyone on clone/pull. Option B is unscalable and error-prone. Option C is not a configuration mechanism Claude Code loads. Option D references a config file/array that does not exist.",
-    doc_link: "https://docs.anthropic.com/en/docs/claude-code/memory"
+    doc_link: "https://code.claude.com/docs/en/memory"
   },
   {
     id: "q18",
@@ -266,7 +266,7 @@ var QUESTIONS = [
     ],
     correct: [0],
     explanation: "context: fork runs the skill in an isolated sub-agent context, keeping verbose discovery output out of the main conversation and returning a concise summary — directly solving context pollution. allowed-tools restricts tool access (a safety concern, not context). argument-hint prompts for parameters. Relocating to user scope changes sharing, not context behavior.",
-    doc_link: "https://docs.anthropic.com/en/docs/claude-code/skills"
+    doc_link: "https://code.claude.com/docs/en/skills"
   },
   {
     id: "q19",
@@ -280,7 +280,7 @@ var QUESTIONS = [
     ],
     correct: [0],
     explanation: "Concrete input/output examples are the most effective way to communicate expected transformations when prose is interpreted inconsistently — they demonstrate exact format rather than describing it. More prose (B) tends to be interpreted inconsistently too. Reasoning narration (C) does not pin down output format. Temperature (D) reduces randomness but does not teach the intended mapping.",
-    doc_link: "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/multishot-prompting"
+    doc_link: "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/multishot-prompting"
   },
   {
     id: "q20",
@@ -294,7 +294,7 @@ var QUESTIONS = [
     ],
     correct: [0],
     explanation: "Direct execution is appropriate for simple, well-scoped changes with a clear cause — like adding one missing null-check identified by a stack trace. Plan mode (B) is for large-scale, multi-file, or architecturally ambiguous work and adds overhead here. Forking (C) and the Explore subagent (D) are for divergent-approach exploration and verbose discovery, neither of which this single-line fix requires.",
-    doc_link: "https://docs.anthropic.com/en/docs/claude-code/plan-mode"
+    doc_link: "https://code.claude.com/docs/en/permission-modes"
   },
 
   // ── Scenario: Multi-Agent Research System (generated) ───────────────────
@@ -311,7 +311,7 @@ var QUESTIONS = [
     ],
     correct: [0],
     explanation: "Spawning subagents requires the coordinator to have 'Task' in its allowedTools; without it, the coordinator cannot delegate. Option B describes expected behavior (subagents do not auto-inherit parent context) and is unrelated to spawning. Option C misattributes delegation to temperature. Option D is backwards — it is the coordinator, not the subagents, that needs Task access to spawn them.",
-    doc_link: "https://docs.anthropic.com/en/docs/build-with-claude/agents"
+    doc_link: "https://code.claude.com/docs/en/sub-agents"
   },
   {
     id: "q22",
@@ -325,7 +325,7 @@ var QUESTIONS = [
     ],
     correct: [0],
     explanation: "The coordinator should analyze query complexity and dynamically select which subagents to invoke, scaling effort to the task. Option B permanently strips capability needed for complex topics. Option C uses an arbitrary cap as a control mechanism — an anti-pattern that can truncate legitimately complex work. Option D collapses the specialization that makes the system reliable on hard queries.",
-    doc_link: "https://docs.anthropic.com/en/docs/build-with-claude/agents"
+    doc_link: "https://code.claude.com/docs/en/sub-agents"
   },
   {
     id: "q23",
@@ -339,7 +339,7 @@ var QUESTIONS = [
     ],
     correct: [0],
     explanation: "Conflicting statistics from credible sources should be annotated with source attribution and dates, not silently resolved — and the two figures here differ partly because they are from different years, a temporal difference that should not be misread as a contradiction. Averaging (B) fabricates a number no source supports. Keeping the higher value (C) is an arbitrary heuristic. Dropping both (D) discards valid, useful information.",
-    doc_link: "https://docs.anthropic.com/en/docs/build-with-claude/agents"
+    doc_link: "https://code.claude.com/docs/en/sub-agents"
   },
   {
     id: "q24",
@@ -353,7 +353,7 @@ var QUESTIONS = [
     ],
     correct: [0],
     explanation: "Too many tools degrade selection reliability, and agents with out-of-role tools tend to misuse them. Restricting each subagent to its role's tools (the principle of least privilege) prevents the misuse structurally. Option B relies on probabilistic prompt compliance. Option C does not stop off-role behavior. Option D keeps the problematic access and adds fragile after-the-fact filtering.",
-    doc_link: "https://docs.anthropic.com/en/docs/build-with-claude/tool-use"
+    doc_link: "https://docs.claude.com/en/docs/agents-and-tools/tool-use/overview"
   },
 
   // ── Scenario: Claude Code for Continuous Integration (generated) ────────
@@ -370,7 +370,7 @@ var QUESTIONS = [
     ],
     correct: [0],
     explanation: "High false-positive categories erode trust in the accurate ones; the fix is explicit categorical criteria specifying what to report versus skip. Vague guidance like 'be conservative' (B) does not improve precision. An arbitrary comment cap (C) can drop real bugs while keeping noise. A bigger model (D) does not substitute for clear criteria about which issues matter to this team.",
-    doc_link: "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/be-clear-and-direct"
+    doc_link: "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/be-clear-and-direct"
   },
   {
     id: "q26",
@@ -384,7 +384,7 @@ var QUESTIONS = [
     ],
     correct: [0],
     explanation: "A session retains the reasoning it used to generate code, making it less likely to question its own decisions. An independent review instance, without that context, catches subtle issues more effectively than self-review prompts, extended thinking, or self-reported confidence — all of which remain anchored to the original reasoning. LLM self-reported confidence is also poorly calibrated.",
-    doc_link: "https://docs.anthropic.com/en/docs/claude-code/overview"
+    doc_link: "https://code.claude.com/docs/en/overview"
   },
   {
     id: "q27",
@@ -398,7 +398,7 @@ var QUESTIONS = [
     ],
     correct: [0],
     explanation: "--output-format json with --json-schema enforces structured, schema-conformant output suitable for automated posting. A Markdown-table instruction (B) still relies on probabilistic formatting. Regex over prose (C) is brittle. The Batches API (D) addresses cost/latency for non-blocking jobs and does not itself guarantee a parseable schema, nor is it suited to a blocking PR check.",
-    doc_link: "https://docs.anthropic.com/en/docs/claude-code/cli-reference"
+    doc_link: "https://code.claude.com/docs/en/cli-reference"
   },
 
   // ── Scenario: Structured Data Extraction (generated) ────────────────────
@@ -415,7 +415,7 @@ var QUESTIONS = [
     ],
     correct: [0],
     explanation: "Required fields pressure the model to fabricate values when the information is absent; making such fields optional/nullable lets it return null truthfully. Format validation (B) catches some fakes but not a fabricated value that happens to match the format. Temperature (C) does not remove the structural pressure of a required field. A prompt instruction (D) is probabilistic and conflicts with a schema that still requires the field.",
-    doc_link: "https://docs.anthropic.com/en/docs/build-with-claude/tool-use"
+    doc_link: "https://docs.claude.com/en/docs/agents-and-tools/tool-use/overview"
   },
   {
     id: "q29",
@@ -429,7 +429,7 @@ var QUESTIONS = [
     ],
     correct: [0],
     explanation: "tool_choice: \"any\" requires the model to call some tool (eliminating free-text replies) while still letting it select the schema appropriate to the unknown document type. \"auto\" (B) permits the model to return text, which is the failure being fixed. Forcing extract_invoice (C) misapplies the invoice schema to contracts and receipts. Removing tools (D) destroys the ability to handle multiple document types.",
-    doc_link: "https://docs.anthropic.com/en/docs/build-with-claude/tool-use"
+    doc_link: "https://docs.claude.com/en/docs/agents-and-tools/tool-use/overview"
   },
   {
     id: "q30",
@@ -443,7 +443,7 @@ var QUESTIONS = [
     ],
     correct: [0],
     explanation: "Retries help with format and structural errors the model can correct, but are ineffective when the required information is absent from the source — no amount of retrying invents data that is not there. Such cases should be routed to human review. Option B and C waste calls on an unrecoverable error. Option D discards retries' real value on correctable errors.",
-    doc_link: "https://docs.anthropic.com/en/docs/build-with-claude/tool-use"
+    doc_link: "https://docs.claude.com/en/docs/agents-and-tools/tool-use/overview"
   },
   {
     id: "q31",
@@ -457,6 +457,6 @@ var QUESTIONS = [
     ],
     correct: [0],
     explanation: "Aggregate accuracy can mask poor performance on specific document types or fields. Stratified analysis by type and field (with stratified random sampling) verifies consistent performance before automating. Re-running for the same aggregate (B) does not reveal segment weaknesses. Auto-approving on the aggregate (C) risks systematic errors in hidden segments. Raising the global threshold (D) still relies on an aggregate that can hide segment-level failures.",
-    doc_link: "https://docs.anthropic.com/en/docs/build-with-claude/tool-use"
+    doc_link: "https://docs.claude.com/en/docs/agents-and-tools/tool-use/overview"
   }
 ];

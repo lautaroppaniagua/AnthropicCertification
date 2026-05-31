@@ -102,7 +102,7 @@ function startExam() {
   var pool = QUESTIONS.filter(function(q) {
     return includeExperimental || q.official;
   });
-  state.questions = shuffle(pool).map(shuffleQuestionOptions);
+  state.questions = shuffle(pool);
   state.current = 0;
   state.answers = {};
   state.confirmed = {};
