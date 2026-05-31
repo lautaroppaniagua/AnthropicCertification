@@ -319,6 +319,11 @@ function renderQuestion(index) {
           officialBadge(q) +
           '<h2 class="question-text">' + escapeHtml(q.question) + '</h2>' +
           '<div class="options-list">' + optionsHtml + '</div>' +
+          '<div class="claude-discuss-row">' +
+            '<button class="btn-claude" id="claude-btn-' + q.id + '" onclick="copyToClaudeContext(\'' + q.id + '\')">' +
+              claudeBtnInner() +
+            '</button>' +
+          '</div>' +
           bottomHtml +
         '</div>' +
       '</main>' +
@@ -328,6 +333,86 @@ function renderQuestion(index) {
         '<button class="btn-secondary" onclick="navigate(1)"' + (index === total - 1 ? ' disabled' : '') + '>Siguiente →</button>' +
       '</footer>' +
     '</div>';
+}
+
+function buildClaudeMarkdown(q, isConfirmed) {
+  var letters = ['A', 'B', 'C', 'D', 'E'];
+  var lines = [];
+
+  lines.push('## Pregunta — Certificación Anthropic');
+  lines.push('');
+  lines.push('**Pregunta:** ' + q.question);
+  lines.push('');
+  lines.push('**Opciones:**');
+  q.options.forEach(function(opt, i) {
+    lines.push('- ' + letters[i] + '. ' + opt);
+  });
+
+  if (isConfirmed) {
+    var correctLetter = letters[q.correct[0]];
+    var correctText = q.options[q.correct[0]];
+    lines.push('');
+    lines.push('**Respuesta correcta:** ' + correctLetter + ' — ' + correctText);
+    lines.push('');
+    lines.push('**Explicación:** ' + q.explanation);
+    lines.push('');
+    lines.push('---');
+    lines.push('Quiero entender mejor esta pregunta. ¿Podés profundizar en por qué la opción ' + correctLetter + ' es la correcta y por qué las demás no lo son?');
+  } else {
+    lines.push('');
+    lines.push('---');
+    lines.push('Quiero entender mejor esta pregunta de la certificación de Anthropic. ¿Podés explicarme el concepto que evalúa y orientarme hacia la respuesta correcta?');
+  }
+
+  return lines.join('\n');
+}
+
+function copyToClaudeContext(qid) {
+  var q = state.questions.filter(function(x) { return x.id === qid; })[0];
+  if (!q) return;
+  var isConfirmed = !!state.confirmed[qid];
+  var text = buildClaudeMarkdown(q, isConfirmed);
+  var btn = document.getElementById('claude-btn-' + qid);
+
+  function onSuccess() {
+    window.open('https://claude.ai/new', '_blank', 'noopener,noreferrer');
+    if (btn) {
+      btn.classList.add('btn-claude-copied');
+      btn.innerHTML = '<span>✓ ¡Copiado!</span>';
+      setTimeout(function() {
+        var b = document.getElementById('claude-btn-' + qid);
+        if (b) {
+          b.classList.remove('btn-claude-copied');
+          b.innerHTML = claudeBtnInner();
+        }
+      }, 2000);
+    }
+  }
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(onSuccess).catch(function() {
+      fallbackCopy(text);
+      onSuccess();
+    });
+  } else {
+    fallbackCopy(text);
+    onSuccess();
+  }
+}
+
+function fallbackCopy(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+}
+
+function claudeBtnInner() {
+  return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span>Discutir con Claude</span>';
 }
 
 function escapeHtml(str) {

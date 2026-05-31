@@ -738,6 +738,44 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+/* ── DISCUSS WITH CLAUDE BUTTON ───────────────────────── */
+
+.claude-discuss-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+
+.btn-claude {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 13px;
+  background: transparent;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  color: var(--subtext);
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+
+.btn-claude:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
+.btn-claude.btn-claude-copied {
+  border-color: var(--success-border);
+  color: var(--success);
+  background: var(--success-bg);
+}
+
 /* ── RESPONSIVE ───────────────────────────────────────── */
 
 @media (max-width: 600px) {
