@@ -29,7 +29,7 @@ El examen valida que podés tomar decisiones informadas sobre tradeoffs al imple
 
 ### Opción 1 — Online (GitHub Pages)
 
-Entrá directo desde el browser: **[link cuando esté disponible]**
+Entrá directo desde el browser: **https://lautaroppaniagua.github.io/AnthropicCertification/**
 
 ### Opción 2 — Local
 
