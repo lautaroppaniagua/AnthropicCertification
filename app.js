@@ -1,4 +1,4 @@
-var GITHUB_URL = 'https://github.com/TODO/AnthropicCertification';
+var GITHUB_URL = 'https://github.com/lautaroppaniagua/AnthropicCertification';
 
 var state = {
   questions: [],
