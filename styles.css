@@ -909,7 +909,7 @@ body {
 .domain-bar-fill-4 { background: var(--domain-4); }
 .domain-bar-fill-5 { background: var(--domain-5); }
 
-/* ── DISCUSS WITH CLAUDE BUTTON ───────────────────────── */
+/* ── COPY CONTEXT BUTTON ──────────────────────────────── */
 
 .claude-discuss-row {
   display: flex;
@@ -918,136 +918,33 @@ body {
   margin-bottom: 4px;
 }
 
-.btn-claude-group {
-  position: relative;
-  display: inline-flex;
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  overflow: visible;
-  background: var(--card);
-  transition: border-color 0.15s;
-}
-
-.btn-claude-group:hover {
-  border-color: var(--primary);
-}
-
-.btn-claude-primary {
+.btn-claude {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 11px;
+  padding: 6px 13px;
   background: transparent;
-  border: none;
-  border-right: 1.5px solid var(--border);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
   color: var(--subtext);
   font-size: 0.8rem;
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-  border-radius: 6px 0 0 6px;
   white-space: nowrap;
-  transition: color 0.15s, background 0.15s, border-color 0.15s;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
 }
 
-.btn-claude-primary:hover {
+.btn-claude:hover {
+  border-color: var(--primary);
   color: var(--primary);
   background: var(--primary-light);
 }
 
-.btn-claude-group:hover .btn-claude-primary {
-  border-right-color: var(--primary);
-}
-
-.btn-claude-chevron {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 8px;
-  background: transparent;
-  border: none;
-  color: var(--subtext);
-  cursor: pointer;
-  border-radius: 0 6px 6px 0;
-  transition: color 0.15s, background 0.15s;
-}
-
-.btn-claude-chevron:hover {
-  color: var(--primary);
-  background: var(--primary-light);
-}
-
-.btn-claude-menu {
-  position: absolute;
-  top: calc(100% + 6px);
-  right: 0;
-  background: var(--card);
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  box-shadow: var(--shadow-md);
-  min-width: 248px;
-  z-index: 200;
-  overflow: hidden;
-}
-
-.claude-menu-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 10px 14px;
-  background: none;
-  border: none;
-  font-family: inherit;
-  cursor: pointer;
-  text-align: left;
-  color: var(--text);
-  transition: background 0.12s;
-}
-
-.claude-menu-item + .claude-menu-item {
-  border-top: 1px solid var(--border);
-}
-
-.claude-menu-item:hover {
-  background: var(--bg);
-}
-
-.claude-menu-icon {
-  flex-shrink: 0;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  color: var(--subtext);
-}
-
-.claude-menu-text {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  flex: 1;
-}
-
-.claude-menu-text strong {
-  font-size: 0.84rem;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.claude-menu-text span {
-  font-size: 0.74rem;
-  color: var(--subtext);
-}
-
-.claude-menu-ext {
-  flex-shrink: 0;
-  color: var(--subtext);
-  opacity: 0.6;
+.btn-claude.btn-claude-copied {
+  border-color: var(--success-border);
+  color: var(--success);
+  background: var(--success-bg);
 }
 
 /* ── RESPONSIVE ───────────────────────────────────────── */

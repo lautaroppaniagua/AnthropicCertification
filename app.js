@@ -10,7 +10,6 @@ var DOMAINS = [
 ];
 
 var includeExperimental = false;
-var openMenuId = null;
 
 function toggleExperimental() {
   includeExperimental = !includeExperimental;
@@ -394,26 +393,10 @@ function renderQuestion(index) {
           '<h2 class="question-text">' + escapeHtml(q.question) + '</h2>' +
           '<div class="options-list">' + optionsHtml + '</div>' +
           '<div class="claude-discuss-row">' +
-            '<div class="btn-claude-group" id="claude-group-' + q.id + '">' +
-              '<button class="btn-claude-primary" onclick="openInClaude(\'' + q.id + '\')">' +
-                '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.827 3.52h-3.654L5.443 20.5h3.204l1.167-3.28h5.372l1.167 3.28h3.204L13.827 3.52zm-3.125 11.3 1.773-4.985 1.773 4.985H10.702z"/></svg>' +
-                '<span>Open in Claude</span>' +
-              '</button>' +
-              '<button class="btn-claude-chevron" onclick="toggleClaudeMenu(\'' + q.id + '\', event)" aria-label="Más opciones">' +
-                '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>' +
-              '</button>' +
-              '<div class="btn-claude-menu" id="claude-menu-' + q.id + '" hidden>' +
-                '<button class="claude-menu-item" onclick="openInClaude(\'' + q.id + '\')">' +
-                  '<div class="claude-menu-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13.827 3.52h-3.654L5.443 20.5h3.204l1.167-3.28h5.372l1.167 3.28h3.204L13.827 3.52zm-3.125 11.3 1.773-4.985 1.773 4.985H10.702z"/></svg></div>' +
-                  '<div class="claude-menu-text"><strong>Open in Claude</strong><span>Preguntale sobre esta pregunta</span></div>' +
-                  '<svg class="claude-menu-ext" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>' +
-                '</button>' +
-                '<button class="claude-menu-item" onclick="copyClaudeMarkdown(\'' + q.id + '\')">' +
-                  '<div class="claude-menu-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></div>' +
-                  '<div class="claude-menu-text"><strong>Copiar contexto</strong><span>Markdown para pegar en cualquier LLM</span></div>' +
-                '</button>' +
-              '</div>' +
-            '</div>' +
+            '<button class="btn-claude" id="claude-btn-' + q.id + '" onclick="copyClaudeMarkdown(\'' + q.id + '\')">' +
+              '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>' +
+              '<span>Copiar contexto</span>' +
+            '</button>' +
           '</div>' +
           bottomHtml +
         '</div>' +
@@ -479,49 +462,22 @@ function doCopy(text, callback) {
   }
 }
 
-function toggleClaudeMenu(qid, event) {
-  event.stopPropagation();
-  var menu = document.getElementById('claude-menu-' + qid);
-  if (!menu) return;
-  if (openMenuId === qid) {
-    menu.hidden = true;
-    openMenuId = null;
-  } else {
-    if (openMenuId) {
-      var prev = document.getElementById('claude-menu-' + openMenuId);
-      if (prev) prev.hidden = true;
-    }
-    menu.hidden = false;
-    openMenuId = qid;
-  }
-}
-
-function openInClaude(qid) {
-  var menu = document.getElementById('claude-menu-' + qid);
-  if (menu) menu.hidden = true;
-  openMenuId = null;
-  var q = getQuestion(qid);
-  if (!q) return;
-  doCopy(buildClaudeMarkdown(q, !!state.confirmed[qid]), function() {
-    window.open('https://claude.ai/new', '_blank', 'noopener,noreferrer');
-  });
-}
-
 function copyClaudeMarkdown(qid) {
-  var menu = document.getElementById('claude-menu-' + qid);
-  if (menu) menu.hidden = true;
-  openMenuId = null;
   var q = getQuestion(qid);
   if (!q) return;
   doCopy(buildClaudeMarkdown(q, !!state.confirmed[qid]), function() {
-    var grp = document.getElementById('claude-group-' + qid);
-    if (!grp) return;
-    var span = grp.querySelector('.btn-claude-primary span');
+    var btn = document.getElementById('claude-btn-' + qid);
+    if (!btn) return;
+    var span = btn.querySelector('span');
     if (span) {
+      btn.classList.add('btn-claude-copied');
       span.textContent = '✓ ¡Copiado!';
       setTimeout(function() {
-        var s = document.querySelector('#claude-group-' + qid + ' .btn-claude-primary span');
-        if (s) s.textContent = 'Open in Claude';
+        var b = document.getElementById('claude-btn-' + qid);
+        if (b) {
+          b.classList.remove('btn-claude-copied');
+          b.querySelector('span').textContent = 'Copiar contexto';
+        }
       }, 2000);
     }
   });
@@ -535,13 +491,5 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
-
-document.addEventListener('click', function() {
-  if (openMenuId) {
-    var menu = document.getElementById('claude-menu-' + openMenuId);
-    if (menu) menu.hidden = true;
-    openMenuId = null;
-  }
-});
 
 init();
