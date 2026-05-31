@@ -1,5 +1,14 @@
 var GITHUB_URL = 'https://github.com/lautaroppaniagua/AnthropicCertification';
 
+var DOMAINS = [
+  null,
+  { label: 'Agentic Architecture & Orchestration', short: 'Agentic Architecture', weight: 27 },
+  { label: 'Tool Design & MCP Integration',         short: 'Tool Design & MCP',    weight: 18 },
+  { label: 'Claude Code Configuration & Workflows', short: 'Claude Code Config',   weight: 20 },
+  { label: 'Prompt Engineering & Structured Output',short: 'Prompt Engineering',   weight: 20 },
+  { label: 'Context Management & Reliability',      short: 'Context Management',   weight: 15 }
+];
+
 var includeExperimental = false;
 var openMenuId = null;
 
@@ -94,6 +103,12 @@ function officialBadge(q) {
   return '<span class="badge badge-experimental">⚠ Pregunta experimental</span>';
 }
 
+function domainBadge(q) {
+  if (!q.domain) return '';
+  var d = DOMAINS[q.domain];
+  return '<span class="badge badge-domain badge-domain-' + q.domain + '">D' + q.domain + ' · ' + d.short + '</span>';
+}
+
 function init() {
   initTheme();
   renderStart();
@@ -165,24 +180,82 @@ function showResults() {
     if (JSON.stringify(ans) === JSON.stringify(correct)) score++;
   });
 
-  var pct = Math.round((score / state.questions.length) * 100);
+  var total = state.questions.length;
+  var pct = Math.round((score / total) * 100);
   var pass = pct >= 70;
+
+  // ── per-domain breakdown ──────────────────────────────
+  var ds = {};
+  for (var d = 1; d <= 5; d++) ds[d] = { total: 0, correct: 0 };
+  state.questions.forEach(function(q) {
+    if (!q.domain) return;
+    ds[q.domain].total++;
+    var ans = (state.answers[q.id] || []).slice().sort();
+    var cor = q.correct.slice().sort();
+    if (JSON.stringify(ans) === JSON.stringify(cor)) ds[q.domain].correct++;
+  });
+
+  var domainRowsHtml = '';
+  for (var di = 1; di <= 5; di++) {
+    var dstat = ds[di];
+    if (dstat.total === 0) continue;
+    var dpct = Math.round(dstat.correct / dstat.total * 100);
+    domainRowsHtml +=
+      '<div class="domain-row">' +
+        '<div class="domain-row-header">' +
+          '<span class="badge badge-domain badge-domain-' + di + '">D' + di + '</span>' +
+          '<span class="domain-row-name">' + DOMAINS[di].short + '</span>' +
+          '<span class="domain-row-right">' +
+            '<span class="domain-row-score">' + dstat.correct + '/' + dstat.total + '</span>' +
+            '<span class="domain-row-pct ' + (dpct >= 70 ? 'dpct-pass' : 'dpct-fail') + '">' + dpct + '%</span>' +
+          '</span>' +
+        '</div>' +
+        '<div class="domain-bar-track">' +
+          '<div class="domain-bar-fill domain-bar-fill-' + di + '" style="width:' + dpct + '%"></div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  // ── SVG donut ─────────────────────────────────────────
+  var R = 54, C = +(2 * Math.PI * R).toFixed(2);
+  var arc = +(C * pct / 100).toFixed(2);
+  var gap = +(C - arc).toFixed(2);
+  var strokeColor = pass ? 'var(--success)' : 'var(--error)';
+
+  var donutSvg =
+    '<svg class="score-donut" viewBox="0 0 120 120" width="130" height="130" aria-hidden="true">' +
+      '<circle cx="60" cy="60" r="' + R + '" fill="none" class="donut-track" stroke-width="11"/>' +
+      '<circle cx="60" cy="60" r="' + R + '" fill="none" stroke="' + strokeColor + '" stroke-width="11"' +
+        ' stroke-linecap="round"' +
+        ' stroke-dasharray="' + arc + ' ' + gap + '"' +
+        ' transform="rotate(-90 60 60)"/>' +
+      '<text x="60" y="54" text-anchor="middle" class="donut-pct-text">' + pct + '%</text>' +
+      '<text x="60" y="70" text-anchor="middle" class="donut-label-text">correcto</text>' +
+    '</svg>';
 
   document.getElementById('app').innerHTML =
     '<div class="results-screen">' +
       '<div class="results-card">' +
         '<div class="start-theme-row">' + themeToggleBtn() + '</div>' +
         '<h2>Resultado final</h2>' +
-        '<div class="score-display">' +
-          '<span class="score-number">' + score + '</span>' +
-          '<span class="score-divider">/</span>' +
-          '<span class="score-total">' + state.questions.length + '</span>' +
+        '<div class="score-summary">' +
+          '<div class="score-donut-wrap">' + donutSvg + '</div>' +
+          '<div class="score-info">' +
+            '<div class="score-display">' +
+              '<span class="score-number">' + score + '</span>' +
+              '<span class="score-divider">/</span>' +
+              '<span class="score-total">' + total + '</span>' +
+            '</div>' +
+            '<span class="score-pass-label ' + (pass ? 'pass' : 'fail') + '">' +
+              (pass ? '✓ Aprobado' : '✗ A seguir estudiando') +
+            '</span>' +
+            '<p class="time-taken">Tiempo: ' + formatTime(elapsed) + '</p>' +
+          '</div>' +
         '</div>' +
-        '<p class="score-percent">' + pct + '% correcto</p>' +
-        '<span class="score-pass-label ' + (pass ? 'pass' : 'fail') + '">' +
-          (pass ? '✓ Aprobado' : '✗ A seguir estudiando') +
-        '</span>' +
-        '<p class="time-taken">Tiempo: ' + formatTime(elapsed) + '</p>' +
+        '<div class="domain-breakdown">' +
+          '<h3 class="domain-breakdown-title">Resultados por dominio</h3>' +
+          domainRowsHtml +
+        '</div>' +
         '<div class="results-actions">' +
           '<button class="btn-secondary" onclick="reviewAnswers()">Repasar respuestas</button>' +
           '<button class="btn-primary" onclick="restartExam()">Volver a empezar</button>' +
@@ -317,7 +390,7 @@ function renderQuestion(index) {
       '<main class="exam-main">' +
         '<div class="question-card">' +
           (isMultiple ? '<span class="tag-multiple">Respuesta múltiple</span>' : '') +
-          officialBadge(q) +
+          '<div class="badge-row">' + officialBadge(q) + domainBadge(q) + '</div>' +
           '<h2 class="question-text">' + escapeHtml(q.question) + '</h2>' +
           '<div class="options-list">' + optionsHtml + '</div>' +
           '<div class="claude-discuss-row">' +

@@ -4,6 +4,7 @@ var QUESTIONS = [
   {
     id: "q1",
     official: true,
+    domain: 1,
     question: "Production data shows that in 12% of cases, your agent skips get_customer entirely and calls lookup_order using only the customer's stated name, occasionally leading to misidentified accounts and incorrect refunds. What change would most effectively address this reliability issue?",
     options: [
       "Add a programmatic prerequisite that blocks lookup_order and process_refund calls until get_customer has returned a verified customer ID.",
@@ -18,6 +19,7 @@ var QUESTIONS = [
   {
     id: "q2",
     official: true,
+    domain: 2,
     question: "Production logs show the agent frequently calls get_customer when users ask about orders (e.g., 'check my order #12345'), instead of calling lookup_order. Both tools have minimal descriptions ('Retrieves customer information' / 'Retrieves order details') and accept similar identifier formats. What's the most effective first step to improve tool selection reliability?",
     options: [
       "Add few-shot examples to the system prompt demonstrating correct tool selection patterns, with 5–8 examples showing order-related queries routing to lookup_order.",
@@ -32,6 +34,7 @@ var QUESTIONS = [
   {
     id: "q3",
     official: true,
+    domain: 1,
     question: "Your agent achieves 55% first-contact resolution, well below the 80% target. Logs show it escalates straightforward cases (standard damage replacements with photo evidence) while attempting to autonomously handle complex situations requiring policy exceptions. What's the most effective way to improve escalation calibration?",
     options: [
       "Add explicit escalation criteria to your system prompt with few-shot examples demonstrating when to escalate versus resolve autonomously.",
@@ -49,6 +52,7 @@ var QUESTIONS = [
   {
     id: "q4",
     official: true,
+    domain: 3,
     question: "You want to create a custom /review slash command that runs your team's standard code review checklist. This command should be available to every developer when they clone or pull the repository. Where should you create this command file?",
     options: [
       "In the .claude/commands/ directory in the project repository",
@@ -63,6 +67,7 @@ var QUESTIONS = [
   {
     id: "q5",
     official: true,
+    domain: 3,
     question: "You've been assigned to restructure the team's monolithic application into microservices. This will involve changes across dozens of files and requires decisions about service boundaries and module dependencies. Which approach should you take?",
     options: [
       "Enter plan mode to explore the codebase, understand dependencies, and design an implementation approach before making changes.",
@@ -77,6 +82,7 @@ var QUESTIONS = [
   {
     id: "q6",
     official: true,
+    domain: 3,
     question: "Your codebase has distinct areas with different coding conventions: React components use functional style with hooks, API handlers use async/await with specific error handling, and database models follow a repository pattern. Test files are spread throughout the codebase alongside the code they test (e.g., Button.test.tsx next to Button.tsx), and you want all tests to follow the same conventions regardless of location. What's the most maintainable way to ensure Claude automatically applies the correct conventions when generating code?",
     options: [
       "Create rule files in .claude/rules/ with YAML frontmatter specifying glob patterns to conditionally apply conventions based on file paths",
@@ -94,6 +100,7 @@ var QUESTIONS = [
   {
     id: "q7",
     official: true,
+    domain: 1,
     question: "After running the system on the topic 'impact of AI on creative industries,' you observe that each subagent completes successfully: the web search agent finds relevant articles, the document analysis agent summarizes papers correctly, and the synthesis agent produces coherent output. However, the final reports cover only visual arts, completely missing music, writing, and film production. When you examine the coordinator's logs, you see it decomposed the topic into three subtasks: 'AI in digital art creation,' 'AI in graphic design,' and 'AI in photography.' What is the most likely root cause?",
     options: [
       "The synthesis agent lacks instructions for identifying coverage gaps in the findings it receives from other agents.",
@@ -108,6 +115,7 @@ var QUESTIONS = [
   {
     id: "q8",
     official: true,
+    domain: 1,
     question: "The web search subagent times out while researching a complex topic. You need to design how this failure information flows back to the coordinator agent. Which error propagation approach best enables intelligent recovery?",
     options: [
       "Return structured error context to the coordinator including the failure type, the attempted query, any partial results, and potential alternative approaches.",
@@ -122,6 +130,7 @@ var QUESTIONS = [
   {
     id: "q9",
     official: true,
+    domain: 1,
     question: "During testing, you observe that the synthesis agent frequently needs to verify specific claims while combining findings. Currently, when verification is needed, the synthesis agent returns control to the coordinator, which invokes the web search agent, then re-invokes synthesis with results. This adds 2–3 round trips per task and increases latency by 40%. Your evaluation shows that 85% of these verifications are simple fact-checks (dates, names, statistics) while 15% require deeper investigation. What's the most effective approach to reduce overhead while maintaining system reliability?",
     options: [
       "Give the synthesis agent a scoped verify_fact tool for simple lookups, while complex verifications continue delegating to the web search agent through the coordinator.",
@@ -139,6 +148,7 @@ var QUESTIONS = [
   {
     id: "q10",
     official: true,
+    domain: 3,
     question: "Your pipeline script runs claude \"Analyze this pull request for security issues\" but the job hangs indefinitely. Logs indicate Claude Code is waiting for interactive input. What's the correct approach to run Claude Code in an automated pipeline?",
     options: [
       "Add the -p flag: claude -p \"Analyze this pull request for security issues\"",
@@ -153,6 +163,7 @@ var QUESTIONS = [
   {
     id: "q11",
     official: true,
+    domain: 4,
     question: "Your team wants to reduce API costs for automated analysis. Currently, real-time Claude calls power two workflows: (1) a blocking pre-merge check that must complete before developers can merge, and (2) a technical debt report generated overnight for review the next morning. Your manager proposes switching both to the Message Batches API for its 50% cost savings. How should you evaluate this proposal?",
     options: [
       "Use batch processing for the technical debt reports only; keep real-time calls for pre-merge checks.",
@@ -167,6 +178,7 @@ var QUESTIONS = [
   {
     id: "q12",
     official: true,
+    domain: 5,
     question: "A pull request modifies 14 files across the stock tracking module. Your single-pass review analyzing all files together produces inconsistent results: detailed feedback for some files but superficial comments for others, obvious bugs missed, and contradictory feedback — flagging a pattern as problematic in one file while approving identical code elsewhere in the same PR. How should you restructure the review?",
     options: [
       "Split into focused passes: analyze each file individually for local issues, then run a separate integration-focused pass examining cross-file data flow.",
@@ -184,6 +196,7 @@ var QUESTIONS = [
   {
     id: "q13",
     official: false,
+    domain: 1,
     question: "Company policy caps autonomous refunds at $500; anything higher must go to a human. Your system prompt instructs the agent never to exceed $500, but production logs show that when customers are persistent, the agent occasionally calls process_refund for amounts like $650. What is the most reliable way to guarantee the cap is enforced?",
     options: [
       "Add a tool-call interception hook that blocks any process_refund call above $500 and redirects the request to the escalate_to_human workflow.",
@@ -198,6 +211,7 @@ var QUESTIONS = [
   {
     id: "q14",
     official: false,
+    domain: 2,
     question: "Your process_refund MCP tool returns the same generic '{\"error\": \"Operation failed\"}' for every failure. Logs show the agent repeatedly retries refunds that fail because the order is outside the 30-day return window — a fixed policy outcome that will never succeed. What change to the tool's error responses would most improve the agent's behavior?",
     options: [
       "Return structured error metadata including an errorCategory (e.g., business), an isRetryable: false flag, and a customer-friendly explanation of the policy.",
@@ -212,6 +226,7 @@ var QUESTIONS = [
   {
     id: "q15",
     official: false,
+    domain: 5,
     question: "In a long multi-turn billing dispute, your context-management strategy summarizes older turns to save tokens. After several turns the agent quotes the disputed charge as 'about $50' when the customer originally stated $47.83, eroding trust. What is the most effective fix?",
     options: [
       "Extract transactional facts (exact amounts, dates, order numbers, statuses) into a persistent 'case facts' block included verbatim in every prompt, outside the summarized history.",
@@ -226,6 +241,7 @@ var QUESTIONS = [
   {
     id: "q16",
     official: false,
+    domain: 1,
     question: "A customer contacts support with only their name. get_customer returns three different accounts that all match 'John Smith.' What should the agent do to maintain reliability?",
     options: [
       "Ask the customer for an additional identifier (such as email, order number, or postal code) to disambiguate before taking any account action.",
@@ -243,6 +259,7 @@ var QUESTIONS = [
   {
     id: "q17",
     official: false,
+    domain: 3,
     question: "A newly onboarded engineer reports that Claude Code is not following the team's mandatory commit-message and testing conventions, while existing teammates have no issue. You discover the conventions live in your own ~/.claude/CLAUDE.md. What is the correct fix so every developer gets them?",
     options: [
       "Move the conventions into a project-level CLAUDE.md (or .claude/CLAUDE.md) committed to the repository so they are shared via version control.",
@@ -257,6 +274,7 @@ var QUESTIONS = [
   {
     id: "q18",
     official: false,
+    domain: 3,
     question: "You created a /analyze-architecture skill that maps the whole codebase and emits very verbose output. When teammates run it mid-task, the lengthy discovery output floods the main conversation and pushes earlier work out of context. Which SKILL.md configuration best addresses this?",
     options: [
       "Set context: fork in the skill's frontmatter so it runs in an isolated sub-agent context and returns only a summary to the main conversation.",
@@ -271,6 +289,7 @@ var QUESTIONS = [
   {
     id: "q19",
     official: false,
+    domain: 4,
     question: "You repeatedly ask Claude Code to reformat legacy log strings into a normalized structure, but the results are inconsistent — different field orders and inconsistent date handling each run — despite a detailed prose description of the rules. What is the most effective way to get consistent transformations?",
     options: [
       "Provide 2–3 concrete input/output examples showing exactly how a raw log line should map to the normalized structure.",
@@ -285,6 +304,7 @@ var QUESTIONS = [
   {
     id: "q20",
     official: false,
+    domain: 3,
     question: "A bug report includes a clear stack trace pointing to a single null-check that is missing in one function. The fix is well understood and scoped to that one file. Which approach is most appropriate?",
     options: [
       "Use direct execution to apply the targeted fix, since the change is simple, well-scoped, and the cause is already known.",
@@ -302,6 +322,7 @@ var QUESTIONS = [
   {
     id: "q21",
     official: false,
+    domain: 1,
     question: "Your coordinator agent is supposed to delegate to specialized subagents, but at runtime it never spawns them — it tries to do all the research itself and produces shallow results. Configuration review shows the subagent definitions are correct. What is the most likely cause?",
     options: [
       "The coordinator's allowedTools does not include 'Task', so it cannot invoke subagents.",
@@ -316,6 +337,7 @@ var QUESTIONS = [
   {
     id: "q22",
     official: false,
+    domain: 1,
     question: "Your research system always routes every query through the full pipeline (web search → document analysis → synthesis → report). For a simple factual query like 'What year was the Eiffel Tower completed?' this is slow and expensive. What design change best improves efficiency without hurting quality on complex topics?",
     options: [
       "Have the coordinator analyze each query's requirements and dynamically select only the subagents needed, rather than always invoking the full pipeline.",
@@ -330,6 +352,7 @@ var QUESTIONS = [
   {
     id: "q23",
     official: false,
+    domain: 5,
     question: "While researching market size, your document-analysis subagents return two different figures from two credible sources ($12B from a 2023 report, $15B from a 2024 report). The synthesis agent currently picks one value and drops the other. What should the synthesis behavior be instead?",
     options: [
       "Preserve both values with source attribution and publication dates, annotating the discrepancy rather than arbitrarily selecting one.",
@@ -344,6 +367,7 @@ var QUESTIONS = [
   {
     id: "q24",
     official: false,
+    domain: 2,
     question: "Each of your four research subagents was given the full set of 18 tools 'for flexibility.' You notice the synthesis subagent sometimes launches its own web searches and document fetches instead of synthesizing the findings it was handed, producing inconsistent reports. What is the best corrective action?",
     options: [
       "Scope each subagent's tool set to only the tools its role needs, removing web search and fetch tools from the synthesis agent.",
@@ -361,6 +385,7 @@ var QUESTIONS = [
   {
     id: "q25",
     official: false,
+    domain: 4,
     question: "Your automated PR reviewer posts many comments about minor style preferences and local naming choices alongside genuine bugs. Developers start ignoring all of its comments, including the accurate security findings. What is the most effective first change?",
     options: [
       "Rewrite the review prompt with explicit criteria defining which issues to report (e.g., bugs, security) versus skip (minor style, local patterns), instead of relying on confidence-based filtering.",
@@ -375,6 +400,7 @@ var QUESTIONS = [
   {
     id: "q26",
     official: false,
+    domain: 5,
     question: "In your CI pipeline, the same Claude session that generates code then reviews its own changes for bugs. It rarely flags problems, yet independent testing later finds real defects. What change most improves defect detection?",
     options: [
       "Run the review in a separate, independent Claude instance that lacks the generator's reasoning context.",
@@ -389,6 +415,7 @@ var QUESTIONS = [
   {
     id: "q27",
     official: false,
+    domain: 4,
     question: "Your CI job runs Claude Code non-interactively to review PRs, and a downstream script must post each finding as an inline GitHub comment. Right now the findings come back as free-form prose that the script cannot reliably parse. What is the best way to produce machine-parseable output?",
     options: [
       "Use --output-format json together with --json-schema to enforce structured, schema-conformant findings the script can parse directly.",
@@ -406,6 +433,7 @@ var QUESTIONS = [
   {
     id: "q28",
     official: false,
+    domain: 4,
     question: "Your extraction tool's JSON schema marks every field as required. When a source invoice omits a purchase-order number, the model invents a plausible-looking PO number to satisfy the schema. What schema design change best prevents this fabrication?",
     options: [
       "Make fields that may be absent from source documents optional/nullable so the model can return null instead of fabricating a value.",
@@ -420,6 +448,7 @@ var QUESTIONS = [
   {
     id: "q29",
     official: false,
+    domain: 4,
     question: "You receive a stream of documents of unknown type — invoices, contracts, and receipts — and have a separate extraction tool (schema) for each. The model sometimes responds with conversational text instead of calling any extraction tool. How do you guarantee it always returns structured output via a tool?",
     options: [
       "Set tool_choice: \"any\" so the model must call one of the available extraction tools rather than returning free text, letting it pick the schema that matches the document.",
@@ -434,6 +463,7 @@ var QUESTIONS = [
   {
     id: "q30",
     official: false,
+    domain: 5,
     question: "Your extraction pipeline retries on validation failure by re-sending the document, the failed extraction, and the specific error. For 'total does not equal sum of line items' errors the retry usually succeeds, but for 'required tax_id missing' errors the retries keep failing because the tax ID simply is not in the document. How should you handle these two error types?",
     options: [
       "Retry format/structural errors (like the sum mismatch), but for information genuinely absent from the source, route to human review instead of retrying.",
@@ -448,6 +478,7 @@ var QUESTIONS = [
   {
     id: "q31",
     official: false,
+    domain: 5,
     question: "Before reducing human review, your team measures the extraction system at 97% overall accuracy and proposes auto-approving all high-confidence extractions. You are concerned this number could hide weak spots. What is the most appropriate validation step?",
     options: [
       "Analyze accuracy stratified by document type and field, using stratified random sampling, to confirm performance is consistent across all segments before automating.",
