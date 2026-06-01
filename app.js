@@ -61,18 +61,47 @@ function shuffle(arr) {
 }
 
 function shuffleQuestionOptions(q) {
+  var letters = ['A', 'B', 'C', 'D', 'E'];
   var indexed = q.options.map(function(text, i) {
-    return { text: text, isCorrect: q.correct.indexOf(i) !== -1 };
+    return { text: text, originalIdx: i };
   });
   var shuffled = shuffle(indexed);
+
+  // letterMap: old letter -> new letter, based on where each original option landed
+  var letterMap = {};
+  shuffled.forEach(function(item, newIdx) {
+    letterMap[letters[item.originalIdx]] = letters[newIdx];
+  });
+
   var newCorrect = [];
   shuffled.forEach(function(item, i) {
-    if (item.isCorrect) newCorrect.push(i);
+    if (q.correct.indexOf(item.originalIdx) !== -1) newCorrect.push(i);
   });
+
   return Object.assign({}, q, {
     options: shuffled.map(function(o) { return o.text; }),
-    correct: newCorrect
+    correct: newCorrect,
+    explanation: remapExplanationLetters(q.explanation, letterMap)
   });
+}
+
+// Rewrites option-letter references in explanation text to match the shuffled order.
+// Handles "Option X", "Options X and Y", "Options X, Y, and Z", and "(X)" parentheticals.
+function remapExplanationLetters(text, letterMap) {
+  // Pass 1: "Option(s) X" possibly followed by ", Y", " and Z", " or W"
+  text = text.replace(
+    /\b(Options?\s+)([A-E](?:[,\s]+(?:and\s+|or\s+)?[A-E])*)\b/g,
+    function(_, optPrefix, letterList) {
+      return optPrefix + letterList.replace(/[A-E]/g, function(L) {
+        return letterMap[L] || L;
+      });
+    }
+  );
+  // Pass 2: parenthetical letter refs like "(A)", "(B)"
+  text = text.replace(/\(([A-E])\)/g, function(_, letter) {
+    return '(' + (letterMap[letter] || letter) + ')';
+  });
+  return text;
 }
 
 function pad(n) {
@@ -117,7 +146,7 @@ function startExam() {
   var pool = QUESTIONS.filter(function(q) {
     return includeExperimental || q.official;
   });
-  state.questions = shuffle(pool);
+  state.questions = shuffle(pool).map(shuffleQuestionOptions);
   state.current = 0;
   state.answers = {};
   state.confirmed = {};
